@@ -1,0 +1,6 @@
+[submodule "aihwkit"]
+	path = aihwkit
+	url = https://github.com/IBM/aihwkit.git
+[submodule "mmwsdr"]
+	path = mmwsdr
+	url = https://github.com/nyu-wireless/mmwsdr.git
