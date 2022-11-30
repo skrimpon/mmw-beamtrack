@@ -4,3 +4,6 @@
 [submodule "mmwsdr"]
 	path = mmwsdr
 	url = https://github.com/nyu-wireless/mmwsdr.git
+[submodule "pm4vr"]
+	path = pm4vr
+	url = https://github.com/imec-idlab/pm4vr.git
