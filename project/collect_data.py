@@ -15,7 +15,7 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
-path = os.path.abspath('../../mmwsdr/host/')
+path = os.path.abspath('../../')
 if not path in sys.path:
     sys.path.append(path)
 import mmwsdr
@@ -29,7 +29,7 @@ def main():
     # Parameters
     nfft = 1024  # num of continuous samples per frames
     nskip = 0  # num of samples to skip between frames
-    nframe = 8  # num of frames
+    nframe = 4  # num of frames
     isdebug = False  # print debug messages
     iscalibrated = True  # apply calibration parameters
     sc_min = -400  # min sub-carrier index
@@ -55,10 +55,12 @@ def main():
     config.read('../../config/sivers.ini')
 
     # Create the SDR objects and the XY table controllers
-    sdr1 = mmwsdr.sdr.Sivers60GHz(config=config, node='srv1-in1', freq=args.freq, isdebug=isdebug, islocal=(node == 'srv1-in1'), iscalibrated=iscalibrated)
+    sdr1 = mmwsdr.sdr.Sivers60GHz(config=config, node='srv1-in1', freq=args.freq, isdebug=isdebug,
+                                  islocal=(node == 'srv1-in1'), iscalibrated=iscalibrated)
     xytable1 = mmwsdr.utils.XYTable(config['srv1-in1']['table_name'], isdebug=isdebug)
 
-    sdr2 = mmwsdr.sdr.Sivers60GHz(config=config, node='srv1-in2', freq=args.freq, isdebug=isdebug, islocal=(node == 'srv1-in2'), iscalibrated=iscalibrated)
+    sdr2 = mmwsdr.sdr.Sivers60GHz(config=config, node='srv1-in2', freq=args.freq, isdebug=isdebug,
+                                  islocal=(node == 'srv1-in2'), iscalibrated=iscalibrated)
     xytable2 = mmwsdr.utils.XYTable(config['srv1-in2']['table_name'], isdebug=isdebug)
 
     # Create a wide-band tx signal
@@ -66,6 +68,8 @@ def main():
 
     # Send the transmit sequence with cyclic repeat
     sdr1.send(txtd * tx_pwr)
+    # Set the tx beam pointing at 0 deg
+    sdr1.beam_index = 32
 
     # Move TX at the center facing at 0 deg
     xytable1.move(x=650, y=650, angle=0)
@@ -73,6 +77,7 @@ def main():
     # Main loop
     data = pd.DataFrame(columns=['Loc_X', 'Loc_Y', 'Angle', 'Beam_Index', 'SNR'])
     isamp = 0
+    t0 = datetime.now()
     for x in x_test:
         for y in y_test:
             for angle in angle_test:
@@ -91,16 +96,19 @@ def main():
                     sig_max = np.max(pdp, axis=1)
                     sig_avg = np.mean(pdp, axis=1)
                     snr = np.mean(sig_max - sig_avg)
-                    data.loc[isamp].append([x, y, angle, beam_index, snr])
+                    data.loc[isamp] = [x, y, angle, beam_index, snr]
                     isamp += 1
-                    print(f"\rElapsed Time: {datetime.now()}, Progress: {isamp/nsamp:.2f}%", end='')
-                    break
-                break
-            break
-        break
+                    if sys.version_info[0] == 2:
+                        print
+                        "\rElapsed Time: {}, Progress: {:.4f} %".format(datetime.now() - t0,
+                                                                        float(isamp) / float(nsamp) * 100),
+                    else:
+                        print(
+                            "\rElapsed Time: {datetime.now() - t0}, Progress: {float(isamp) / float(nsamp) * 100:.4f} %",
+                            end="")
     print('')
 
-    data.to_csv(time.strftime("%Y%m%d%H%M_beamtracking.csv"))
+    data.to_csv(time.strftime("%Y%m%d%H%M_beamtracking.csv"), index=False)
 
     # Delete the SDR object. Close the TCP connections.
     del sdr1, sdr2
