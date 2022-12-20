@@ -7,15 +7,15 @@
 Wireless communications over millimeter wave (mmWave) bands rely on narrow electrically steerable beams to overcome blockages and pathloss. In scenarios with user mobility, it is necessary to develop efficient solutions to track the available beams and find the best option. Therefore, latency and energy efficiency are very critical for this application. In this work, we explore the use of the IBM Analog AI hardware accelerators [1] as our beamtracking solution. For this application we explore the accuracy of the beamtracking model on various analog devices (e.g., PCM, RRAM, ECRAM). Most of the works in the literature rely on network simulations to generate data for beamtracking. In this work we use COSMOS [2], an advanced wireless testbed deployed in NYC, to generate the beamtracking data. On top of these data we fit a mobility model for a specific scenario (e.g., a human playing a virtual reality (VR) game [3])
 
 ## Dataset is open source :arrow_down:
-The dataset can be found [here](https://drive.google.com/file/d/1J3RXL1FtX_H-Bjax4-G_3GRF6OosaxbD/view?usp=share_link).
+The open-source dataset is located [here](https://drive.google.com/file/d/1J3RXL1FtX_H-Bjax4-G_3GRF6OosaxbD/view?usp=share_link).
 
 ## Project directory :open_file_folder:
-Using the code in [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project) to generate the dataset, train and test the reference and analog AI solutions.
+Using the code [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project) to generate the dataset, train and test the reference and analog AI solutions.
 
 ## Python environment :snake:
 
-We use conda to create a virtual environment. To regenerate the environment perform the following. The code was tested
-in a Linux enviornment. This is a requirement if you want to use the IBM AI hardware toolkit with a GPU.
+We use conda to create the Python virtual environment. To regenerate the environment perform the following. The code was tested
+in a Linux environment. This is a requirement if you want to use the IBM AI hardware toolkit with a GPU.
 
 ```shell
 > conda env create --file=environment.yaml
