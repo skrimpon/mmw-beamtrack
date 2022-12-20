@@ -1,8 +1,8 @@
 """
-:organization: New York University
-:author: Panagiotis Skrimponis
+@organization: New York University
+@author: Panagiotis Skrimponis
 
-:copyright: 2022
+@copyright: 2022
 """
 # Import Libraries
 import os
@@ -68,6 +68,7 @@ def main():
 
     # Send the transmit sequence with cyclic repeat
     sdr1.send(txtd * tx_pwr)
+
     # Set the tx beam pointing at 0 deg
     sdr1.beam_index = 32
 
@@ -75,7 +76,7 @@ def main():
     xytable1.move(x=650, y=650, angle=0)
 
     # Main loop
-    data = pd.DataFrame(columns=['Loc_X', 'Loc_Y', 'Angle', 'Beam_Index', 'SNR'])
+    data = pd.DataFrame(columns=["Loc_X", "Loc_Y", "Angle", "Beam_Index", "SNR"])
     isamp = 0
     t0 = datetime.now()
     for x in x_test:
@@ -98,23 +99,21 @@ def main():
                     snr = np.mean(sig_max - sig_avg)
                     data.loc[isamp] = [x, y, angle, beam_index, snr]
                     isamp += 1
+                    elapsed = datetime.now() - t0
+                    progress = float(isamp) / float(nsamp) * 100
                     if sys.version_info[0] == 2:
-                        print
-                        "\rElapsed Time: {}, Progress: {:.4f} %".format(datetime.now() - t0,
-                                                                        float(isamp) / float(nsamp) * 100),
+                        print "\rElapsed: {}, Progress: {:.4f} %".format(elapsed, progress),
                     else:
-                        print(
-                            "\rElapsed Time: {datetime.now() - t0}, Progress: {float(isamp) / float(nsamp) * 100:.4f} %",
-                            end="")
+                        print(f"\rElapsed: {elapsed}, Progress: {progress:.4f} %", end="")
     print('')
 
-    data.to_csv(time.strftime("%Y%m%d%H%M_beamtracking.csv"), index=False)
+    data.to_csv(time.strftime("%Y%m%d_beamtracking.csv"), index=False)
 
     # Delete the SDR object. Close the TCP connections.
     del sdr1, sdr2
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     try:
         main()
     except KeyboardInterrupt:
