@@ -10,13 +10,20 @@ Wireless communications over millimeter wave (mmWave) bands rely on narrow elect
 The dataset can be found [here](https://drive.google.com/file/d/1J3RXL1FtX_H-Bjax4-G_3GRF6OosaxbD/view?usp=share_link).
 
 ## Project directory :open_file_folder:
-Using the code in [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project) we generate the dataset, train and test the reference and analog AI solutions. We provide more details [here](https://raw.githubusercontent.com/skrimpon/mmw-beamtrack/main/project/README.md).
+Using the code in [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project) to generate the dataset, train and test the reference and analog AI solutions.
 
-## Python environment
-We use conda to create a virtual environment. To regenerate the environment perform the following. The code was tested in a Linux enviornment. This is a requirement if you want to use the IBM AI hardware toolkit with a GPU.
+## Python environment :snake:
+
+We use conda to create a virtual environment. To regenerate the environment perform the following. The code was tested
+in a Linux enviornment. This is a requirement if you want to use the IBM AI hardware toolkit with a GPU.
+
 ```shell
 > conda env create --file=environment.yaml
 ```
+
+## Regenerating the results :arrow_forward:
+Follow the detailed description [here](https://raw.githubusercontent.com/skrimpon/mmw-beamtrack/main/project/README.md).
+
 
 ## Main results :mortar_board:
 > We compare the performance of analog AI accelerators with a PyTorch based LSTM solutions.
