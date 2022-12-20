@@ -33,6 +33,7 @@ from collections import defaultdict
 import time
 import random
 from scipy.io import savemat
+from datetime import datetime
 
 
 def main():
@@ -43,10 +44,10 @@ def main():
     radius = 65  # r is the radius of the arc on which a walking user is being redirected
 
     env_size = 130
-    num_trajs = 2
+    num_trajs = 10000
 
+    t0 = datetime.now()
     for num_traj in range(num_trajs):
-        print(f'Trajectory #{num_traj}')
         env = environment.define_square(env_size)
 
         rdw = algorithm.RedirectedWalker(duration=duration, steps_per_second=steps_per_second, gamma=gamma,
@@ -65,11 +66,10 @@ def main():
             int)  # Definition of the performance metric entitled number of resets per user
         distance_between_resets_per_user = defaultdict(list)  # Storing all distances between resets per user
 
-        for user in users:
-            # Let the first step be taken without redirection to kick-start stuff
-            user.phy_locations.append(user.virt_locations[1])
-            distance_between_resets_per_user[user.identity] = []
-            distance_between_resets_per_user[user.identity].append(0.0)
+        # Let the first step be taken without redirection to kick-start stuff
+        usr1.phy_locations.append(usr1.virt_locations[1])
+        distance_between_resets_per_user[usr1.identity] = []
+        distance_between_resets_per_user[usr1.identity].append(0.0)
 
         for time_iter in range(0, rdw.steps - 2):
 
@@ -83,37 +83,36 @@ def main():
             iter_temp = 0
 
             # Iterate through all users and calculate their next physical step based on the force vectors and moving rates.
-            for user in users:
+            # x_step and y_step define the user's physical offset from the current location
+            step = rdw.calculate_next_physical_step(usr1, moving_rates[iter_temp], force_vectors[iter_temp])
 
-                # x_step and y_step define the user's physical offset from the current location
-                step = rdw.calculate_next_physical_step(user, moving_rates[iter_temp], force_vectors[iter_temp])
+            # (Jakob) Redirection was implemented with a 180 degree rotation. The paper however proposes to rotate towards
+            # the force vector. This moves the user away from all obstacles (walls and other users) optimally meaning
+            # there's no reason to check for users and walls separately.
+            # The following method checks if a collision is about to happen (threshold selected arbitrarily for now)
+            reset_step = rdw.reset_if_needed(force_vectors[iter_temp], env_vectors[iter_temp],
+                                             user_vectors[iter_temp], threshold=1000000)
 
-                # (Jakob) Redirection was implemented with a 180 degree rotation. The paper however proposes to rotate towards
-                # the force vector. This moves the user away from all obstacles (walls and other users) optimally meaning
-                # there's no reason to check for users and walls separately.
-                # The following method checks if a collision is about to happen (threshold selected arbitrarily for now)
-                reset_step = rdw.reset_if_needed(force_vectors[iter_temp], env_vectors[iter_temp],
-                                                 user_vectors[iter_temp], threshold=1000000)
+            reset_occurred = reset_step is not None
+            if reset_occurred:
+                step = reset_step
+                # Create a new instance in the list representing distances passed without a reset
+                distance_between_resets_per_user[usr1.identity].append(algorithm.norm(step))
+            else:
+                # Add the step in latest instance of the list representing distances passed without a reset
+                distance_between_resets_per_user[usr1.identity][-1] += algorithm.norm(step)
 
-                reset_occurred = reset_step is not None
-                if reset_occurred:
-                    step = reset_step
-                    # Create a new instance in the list representing distances passed without a reset
-                    distance_between_resets_per_user[user.identity].append(algorithm.norm(step))
-                else:
-                    # Add the step in latest instance of the list representing distances passed without a reset
-                    distance_between_resets_per_user[user.identity][-1] += algorithm.norm(step)
+            # This is just for storing the number of rotations per user
+            num_resets_per_users[usr1.identity] += reset_occurred
 
-                # This is just for storing the number of rotations per user
-                num_resets_per_users[user.identity] += reset_occurred
+            # Update the user's physical trajectory with the newest location
+            usr1.phy_locations.append(usr1.get_phy_loc() + step)
 
-                # Update the user's physical trajectory with the newest location
-                user.phy_locations.append(user.get_phy_loc() + step)
-
-                iter_temp += 1
+            iter_temp += 1
+        print(f'\rElapsed: {datetime.now() - t0}, Progress: {(num_traj + 1) / num_trajs * 100:.2f} %', end='')
 
         data = np.zeros((duration - 1, 3))
-        arr1 = (np.array(user.phy_locations) + 65) * 10
+        arr1 = (np.array(usr1.phy_locations) + 65) * 10
         tmp = arr1[:-1] - arr1[1:]
         data[:, 0] = (arr1[:-1, 0] + arr1[1:, 0]) / 2
         data[:, 1] = (arr1[:-1, 1] + arr1[1:, 1]) / 2
@@ -121,7 +120,7 @@ def main():
         tmp = np.arctan(tmp[:, 1] / tmp[:, 0]) * 180 / np.pi
         angles = np.array([-45, -30, -15, 0, 15, 30, 45])
         data[:, 2] = angles[np.digitize(tmp, [-37.5, -22.5, -7.5, 7.5, 22.5, 37.5])]
-        np.save(time.strftime("../data/%Y%m%d_trajectory_"+f"{num_traj}.npy"), data)
+        np.save(time.strftime("../data/traj/%Y%m%d_trajectory_" + f"{num_traj:05d}.npy"), data)
 
 
 if __name__ == '__main__':
