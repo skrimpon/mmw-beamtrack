@@ -157,7 +157,11 @@ if device == "cuda:0":
     cudnn.benchmark = True
 
 if exists(f'../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt'):
+    print('Loading model...')
     model.load_state_dict(torch.load(f'../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt'))
+else:
+    print("ERROR: Cannot find trained model at " + f"../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt.")
+    quit()
 
 pred_snr = []
 best_snr = []

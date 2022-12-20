@@ -90,6 +90,7 @@ class AnalogLSTMModel(AnalogSequential):
             self.mask = (torch.argsort(output, axis=1) < self.k).float()
         return output
 
+
 data = np.load("../data/beamtracking_dataset_v0.npz")["data"]
 num_seq = 5
 num_epochs = 5
@@ -154,6 +155,7 @@ if device == "cuda:0":
     cudnn.benchmark = True
 
 if exists(f'../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt'):
+    print('Loading model...')
     model.load_state_dict(torch.load(f'../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt'))
 
 criterion = nn.MSELoss(reduction='sum')
@@ -199,28 +201,4 @@ for epoch in range(num_epochs):
     print(
         f'\tEpoch Time: {datetime.now() - t0}, Train Loss: {np.mean(train_loss):.3f}, Val Loss: {np.mean(val_loss):.3f}')
 
-torch.save(model.state_dict(), f'./trained_models/aihwkit_{output_file}_clip_k{args.k}_version_v{args.version}.ckpt')
-pred_snr = []
-best_snr = []
-model.eval()
-with torch.no_grad():
-    for batch_index, (inputs, targets) in enumerate(test_loader):
-        inputs, targets = inputs.to(device), targets.to(device)
-        outputs = model(inputs)
-        pred = torch.argmax(outputs, axis=1)
-        best = torch.argmax(targets, axis=1)
-
-        pred = pred.to('cpu').numpy()
-        best = best.to('cpu').numpy()
-        for batch_index, beam_index in enumerate(pred):
-            pred_snr.append(targets[batch_index, beam_index].to('cpu').numpy())
-
-        for batch_index, beam_index in enumerate(best):
-            best_snr.append(targets[batch_index, beam_index].to('cpu').numpy())
-
-best_snr = np.array(best_snr) * (max_val - min_val) + min_val
-pred_snr = np.array(pred_snr) * (max_val - min_val) + min_val
-
-misalign_loss = best_snr - pred_snr
-
-np.save(f'./results/aihwkit_{output_file}_clip_k{args.k}_version_v{args.version}.npy', misalign_loss)
+torch.save(model.state_dict(), f'../data/trained_models/{output_file}_k{args.k}_v{args.version}.ckpt')

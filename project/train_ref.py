@@ -156,4 +156,4 @@ for epoch in range(num_epochs):
     print(
         f'\n\tEpoch Time: {datetime.now() - t0}, Train Loss: {np.mean(train_loss):.3f}, Val Loss: {np.mean(val_loss):.3f}')
 
-torch.save(model.state_dict(), f'../data/trained_models/reference_v{args.version}.ckpt')
+torch.save(model.state_dict(), f'../data/trained_models/reference_k{args.k}_v{args.version}.ckpt')
