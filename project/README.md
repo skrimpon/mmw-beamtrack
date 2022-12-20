@@ -21,37 +21,47 @@ root@srv1-in2:~/$ cd mmwsdr/host/project/mmw-beamtrack/
 root@srv1-in2:~/mmwsdr/host/project/mmw-beamtrack/$ python the collect_data.py
 ```
 Finally, download the dataset under ../data directory.
+
 2. Generate the user trajectories,
 ```shell
 $ python generate_traj.py
 ```
+
 3. Fit the COSMOS data on the user trajectories we run,
 ```shell
 $ python interp_snr.py
 ```
+
 4. Create a dataset in compressed numpy format that has only the signal-to-noise ratio saved in a tensor **<number of trajectories, number of timesteps, number of beams>**
 ```shell
 $ python create_dataset.py
 ```
+
 5. Train neural networks,
 ```shell
 $ python train_ref.py --k 4 --version 0
 $ python train_analog.py --rpu 0 --k 4 --version 0
 $ python train_analog.py --rpu 1 --k 4 --version 0
 ```
-If you want to achieve better performance you can clip the maximum SNR,
-```shell
-$ python train_ref.py --k 4 --version 0 --clip_snr 1
-$ python train_analog.py --rpu 0 --k 4 --version 0 --clip_snr 1
-$ python train_analog.py --rpu 1 --k 4 --version 0 --clip_snr 1
-```
+
 6. Run inference using the test dataset,
 ```shell
 $ python test_ref.py --k 4 --version 0
 $ python test_analog.py --rpu 0 --k 4 --version 0
 $ python test_analog.py --rpu 1 --k 4 --version 0
 ```
+
 7. Generate the plots,
 ```shell
 $ python generate_plot.py
+```
+
+8. If you want to achieve better performance you can clip the maximum SNR,
+```shell
+$ python train_ref.py --k 4 --version 0 --clip_snr 1
+$ python train_analog.py --rpu 0 --k 4 --version 0 --clip_snr 1
+$ python train_analog.py --rpu 1 --k 4 --version 0 --clip_snr 1
+$ python test_ref.py --k 4 --version 0 --clip_snr 1
+$ python test_analog.py --rpu 0 --k 4 --version 0 --clip_snr 1
+$ python test_analog.py --rpu 1 --k 4 --version 0 --clip_snr 1
 ```

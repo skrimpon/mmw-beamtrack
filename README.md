@@ -22,7 +22,7 @@ in a Linux environment. This is a requirement if you want to use the IBM AI hard
 ```
 
 ## Regenerating the results :arrow_forward:
-Follow the detailed description [here](https://raw.githubusercontent.com/skrimpon/mmw-beamtrack/main/project/README.md).
+Follow the detailed description [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project/README.md).
 
 
 ## Main results :mortar_board:
