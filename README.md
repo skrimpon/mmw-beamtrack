@@ -7,14 +7,23 @@
 Wireless communications over millimeter wave (mmWave) bands rely on narrow electrically steerable beams to overcome blockages and pathloss. In scenarios with user mobility, it is necessary to develop efficient solutions to track the available beams and find the best option. Therefore, latency and energy efficiency are very critical for this application. In this work, we explore the use of the IBM Analog AI hardware accelerators [1] as our beamtracking solution. For this application we explore the accuracy of the beamtracking model on various analog devices (e.g., PCM, RRAM, ECRAM). Most of the works in the literature rely on network simulations to generate data for beamtracking. In this work we use COSMOS [2], an advanced wireless testbed deployed in NYC, to generate the beamtracking data. On top of these data we fit a mobility model for a specific scenario (e.g., a human playing a virtual reality (VR) game [3])
 
 ## Dataset is open source :arrow_down:
-The dataset can be found [here]()
+The dataset can be found [here](https://drive.google.com/file/d/1J3RXL1FtX_H-Bjax4-G_3GRF6OosaxbD/view?usp=share_link).
 
-## Training code :open_file_folder:
-Our training code, can be found [here]().
+## Project directory :open_file_folder:
+Using the code in [here](https://github.com/skrimpon/mmw-beamtrack/tree/main/project) we generate the dataset, train and test the reference and analog AI solutions. We provide more details [here](https://raw.githubusercontent.com/skrimpon/mmw-beamtrack/main/project/README.md).
+
+## Python environment
+We use conda to create a virtual environment. To regenerate the environment perform the following. The code was tested in a Linux enviornment. This is a requirement if you want to use the IBM AI hardware toolkit with a GPU.
+```shell
+> conda env create --file=environment.yaml
+```
 
 ## Main results :mortar_board:
-> ![Results](https://raw.githubusercontent.com/skrimpon/nonlin/main/performance_eval.png)
->The performance of our DNN compared with the state of the art baseline. We observe a performance improvement up to 20 dB compared to the baseline. More importantly, our model significantly improves the performance specifically in the non-linear region.
+> We compare the performance of analog AI accelerators with a PyTorch based LSTM solutions.
+> 
+> ![Results](https://raw.githubusercontent.com/skrimpon/mmw-beamtrack/main/performance_eval.png)
+>
+> Even though we track only only 4 beams out of the total 17 beam, we observe that all solutions achieve <2 dB misalignment loss 90% of the time. 
 
 ## References
 1. M. J. Rasch, D. Moreda, T. Gokmen, M. Le Gallo, F. Carta, C. Goldberg, K. El Maghraoui, A. Sebastian, and V. Narayanan, “A flexible and fast pytorch
