@@ -156,7 +156,7 @@ pred_snr = np.array(pred_snr) * (max_val - min_val) + min_val
 
 misalign_loss = best_snr - pred_snr
 
-np.savez_compressed("../data/misalign_loss_ref.npz", loss=misalign_loss)
+np.savez_compressed(f"../data/loss_reference_k{args.k}_v{args.version}.npz", loss=misalign_loss)
 plt.plot(np.sort(misalign_loss), np.cumsum(misalign_loss) / np.sum(misalign_loss), linewidth=2)
 plt.grid(alpha=0.4)
 plt.xlabel('Misalignment loss (in dB)')

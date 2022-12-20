@@ -12,7 +12,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--clip_snr", type=bool, default=False, help="Clip maximum SNR.")
 parser.add_argument("--snr_max", type=float, default=35, help="Maximum value of SNR.")
 parser.add_argument("--k", type=int, default=4, help="Number of beams to track.")
-parser.add_argument("--version", type=int, default=0, help="Number of beams to track.")
+parser.add_argument("--version", type=int, default=0, help="File version.")
 args = parser.parse_args()
 
 def create_sequence(data, num_seq):
