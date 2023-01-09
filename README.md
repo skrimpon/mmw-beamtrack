@@ -1,6 +1,7 @@
 # Millimeter-Wave Beamtracking in the COSMOS Testbed Using Analog AI Accelerators
 ---
 * Panagiotis Skrimponis, NYU Tandon School of Engineering
+* Syed Hashim Ali Shah, NYU Tandon School of Engineering
 ---
 
 ## Abstract &#x1F4D8;
